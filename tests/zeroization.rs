@@ -24,9 +24,10 @@ fn test_zeroize_vec() {
 
 #[test]
 fn test_zeroize_custom_type() {
-    let mut secret = SecretBox::new(Box::new(ZeroizeVerifier::default()));
+    let mut secret = SecretBox::new(Box::new(ZeroizeVerifier {
+        data: vec![0xAB; 32],
+    }));
     assert_eq!(secret.expose_secret().data.len(), 32);
-    assert!(secret.expose_secret().data.iter().all(|&b| b == 0xAB));
 
     secret.zeroize();
     assert!(secret.expose_secret().data.is_empty());

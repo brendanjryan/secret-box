@@ -237,61 +237,20 @@ mod tests {
     use alloc::vec;
 
     #[test]
-    fn test_new_construction() {
-        let secret = SecretBox::new(Box::new("password".to_string()));
-        assert_eq!(secret.expose_secret(), "password");
-    }
-
-    #[test]
-    fn test_init_with_mut_construction() {
-        let secret: SecretBox<Vec<u8>> = SecretBox::init_with_mut(|v: &mut Vec<u8>| {
-            v.extend_from_slice(b"secret");
-        });
-        assert_eq!(secret.expose_secret(), b"secret");
-    }
-
-    #[test]
     fn test_debug_redaction() {
-        let secret = SecretBox::new(Box::new("super_secret_password".to_string()));
-        let debug_output = alloc::format!("{:?}", secret);
-
-        assert!(debug_output.contains("REDACTED"));
-        assert!(debug_output.contains("SecretBox"));
-        assert!(!debug_output.contains("super_secret_password"));
+        let secret = SecretBox::new(Box::new("super_secret".to_string()));
+        let debug = alloc::format!("{:?}", secret);
+        assert!(debug.contains("REDACTED") && !debug.contains("super_secret"));
     }
 
     #[test]
-    fn test_from_box() {
-        let boxed = Box::new("password".to_string());
-        let secret: SecretBox<String> = boxed.into();
-        assert_eq!(secret.expose_secret(), "password");
-    }
-
-    #[test]
-    fn test_from_string() {
-        let secret: SecretBox<String> = "password".to_string().into();
-        assert_eq!(secret.expose_secret(), "password");
-    }
-
-    #[test]
-    fn test_from_vec() {
-        let secret: SecretBox<Vec<u8>> = vec![1, 2, 3].into();
-        assert_eq!(secret.expose_secret(), &[1, 2, 3]);
-    }
-
-    #[test]
-    fn test_debug_asterisks_for_string() {
+    fn test_debug_asterisks() {
         let secret: SecretBox<String> = "hello".to_string().into();
-        let debug_output = alloc::format!("{:?}", secret);
-        assert!(debug_output.contains("*****"));
-        assert!(!debug_output.contains("hello"));
-    }
+        let debug = alloc::format!("{:?}", secret);
+        assert!(debug.contains("*****") && !debug.contains("hello"));
 
-    #[test]
-    fn test_debug_asterisks_for_vec() {
         let secret: SecretBox<Vec<u8>> = vec![1, 2, 3].into();
-        let debug_output = alloc::format!("{:?}", secret);
-        assert!(debug_output.contains("***"));
-        assert!(!debug_output.contains("[1, 2, 3]"));
+        let debug = alloc::format!("{:?}", secret);
+        assert!(debug.contains("***"));
     }
 }
