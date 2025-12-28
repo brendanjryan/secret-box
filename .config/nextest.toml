@@ -1,0 +1,7 @@
+[profile.default]
+status-level = "pass"
+final-status-level = "slow"
+
+[profile.default.slow-timeout]
+period = "10s"
+terminate-after = 2
